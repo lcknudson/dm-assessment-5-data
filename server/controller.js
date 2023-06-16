@@ -13,6 +13,7 @@ const sequelize = new Sequelize(CONNECTION_STRING, {
 })
 
 module.exports = {
+
     seed: (req, res) => {
         sequelize.query(`
             drop table if exists cities;
@@ -23,7 +24,12 @@ module.exports = {
                 name varchar
             );
 
-            *****YOUR CODE HERE*****
+            CREATE TABLE cities (
+              city_id serial PRIMARY KEY,
+               name varchar,
+               rating integer,
+               country_id integer REFERENCES countries(country_id)
+            );
 
             insert into countries (name)
             values ('Afghanistan'),
@@ -225,5 +231,25 @@ module.exports = {
             console.log('DB seeded!')
             res.sendStatus(200)
         }).catch(err => console.log('error seeding DB', err))
+    }, 
+
+    // getCountries: (req, res) => {
+    //     sequelize.query(`
+    //     select *
+    //     from countries;
+    //     `)
+    //     .then((dbRes) => res.status(200).send(dbRes[0]))
+    //     .catch(err => console.log(err))
+    // }
+
+    getCountries: (req, res) => {
+        sequelize.query(`
+            SELECT * FROM countries;
+        `)  .then((dbRes) => {
+            console.log(`query successful`)
+            res.status(200).send(dbRes[0])
+        })            
+            .catch(err => console.log('error getting countries:', err))
     }
+
 }
